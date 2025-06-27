@@ -1,69 +1,77 @@
 <template>
   <UDashboardPanel id="home">
-    <template #header>
-      <UDashboardNavbar title="Home" :ui="{ right: 'gap-3' }">
-        <template #leading>
-          <UDashboardSidebarCollapse />
-        </template>
-
-        <template #right>
-          <UTooltip text="Notifications" :shortcuts="['N']">
-            <UButton color="neutral" variant="ghost" square @click="isNotificationsSlideoverOpen = true">
-              <UChip color="error" inset>
-                <UIcon name="i-lucide-bell" class="size-5 shrink-0" />
-              </UChip>
-            </UButton>
-          </UTooltip>
-
-          <UDropdownMenu :items="items">
-            <UButton icon="i-lucide-plus" size="md" class="rounded-full" />
-          </UDropdownMenu>
-        </template>
-      </UDashboardNavbar>
-
-      <UDashboardToolbar>
-        <template #left>
-          <!-- NOTE: The `-ms-1` class is used to align with the `DashboardSidebarCollapse` button here. -->
-          <HomeDateRangePicker v-model="range" class="-ms-1" />
-
-          <HomePeriodSelect v-model="period" :range="range" />
-        </template>
-      </UDashboardToolbar>
-    </template>
-
     <template #body>
-      <HomeStats :period="period" :range="range" />
-      <HomeChart :period="period" :range="range" />
-      <HomeSales :period="period" :range="range" />
+      <UTable
+        :data
+        :columns
+        class="shrink-0"
+        :ui="{
+          base: 'table-fixed border-separate border-spacing-0',
+          thead: '[&>tr]:bg-elevated/50 [&>tr]:after:content-none',
+          tbody: '[&>tr]:last:[&>td]:border-b-0',
+          th: 'first:rounded-l-lg last:rounded-r-lg border-y border-default first:border-l last:border-r',
+          td: 'border-b border-default',
+        }" />
     </template>
   </UDashboardPanel>
 </template>
 
 <script setup lang="ts">
-  import { sub } from 'date-fns'
-  import type { DropdownMenuItem } from '@nuxt/ui'
-  import type { Period, Range } from '~/types'
+  import { h, resolveComponent } from 'vue'
+  import type { TableColumn } from '@nuxt/ui'
 
-  const { isNotificationsSlideoverOpen } = useDashboard()
+  interface VideoRow {
+    id: string
+    name: string
+    uploadDate: string
+    videoSize: string
+  }
 
-  const items = [
-    [
-      {
-        label: 'New mail',
-        icon: 'i-lucide-send',
-        to: '/inbox',
-      },
-      {
-        label: 'New customer',
-        icon: 'i-lucide-user-plus',
-        to: '/customers',
-      },
-    ],
-  ] satisfies DropdownMenuItem[][]
+  const columns: TableColumn<VideoRow & { action: string }>[] = [
+    {
+      accessorKey: 'id',
+      header: 'ID',
+    },
+    {
+      accessorKey: 'name',
+      header: 'Nom',
+    },
+    {
+      accessorKey: 'uploadDate',
+      header: "Date d'upload",
+    },
+    {
+      accessorKey: 'videoSize',
+      header: 'Taille vidéo',
+    },
+    {
+      accessorKey: 'action',
+      header: 'Action',
+      cell: () => h(resolveComponent('UButton'), { color: 'primary', size: 'xs', label: 'View' }),
+    },
+  ]
 
-  const range = shallowRef<Range>({
-    start: sub(new Date(), { days: 14 }),
-    end: new Date(),
-  })
-  const period = ref<Period>('daily')
+  const data: (VideoRow & { action: string })[] = [
+    {
+      id: '1',
+      name: 'Video 1',
+      uploadDate: '2025-06-27',
+      videoSize: '120 MB',
+      action: '...',
+    },
+    {
+      id: '2',
+      name: 'Video 2',
+      uploadDate: '2025-06-27',
+      videoSize: '120 MB',
+      action: '...',
+    },
+    {
+      id: '3',
+      name: 'Video 3',
+      uploadDate: '2025-06-27',
+      videoSize: '120 MB',
+      action: '...',
+    },
+  ]
 </script>
