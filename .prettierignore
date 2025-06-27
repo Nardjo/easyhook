@@ -1,0 +1,29 @@
+# Nuxt build output
+.nuxt
+dist
+
+# Node modules
+node_modules
+
+# Logs
+logs
+*.log
+
+# Package manager files
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Environment variables
+.env
+.env.*
+
+# Generated files
+.output
+.cache
+
+# Prisma
+prisma/migrations
+
+# Other
+.DS_Store
