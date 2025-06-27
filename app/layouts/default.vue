@@ -37,9 +37,17 @@
   const links = [
     [
       {
+        label: 'Dashboard',
+        icon: 'i-lucide-home',
+        to: '/',
+        onSelect: () => {
+          open.value = false
+        },
+      },
+      {
         label: 'Bibliotheque',
         icon: 'i-lucide-book-open',
-        to: '/',
+        to: '/videos',
         onSelect: () => {
           open.value = false
         },
