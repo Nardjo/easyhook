@@ -45,8 +45,8 @@
         },
       },
       {
-        label: 'Bibliotheque',
-        icon: 'i-lucide-book-open',
+        label: 'Vidéos',
+        icon: 'i-lucide-video',
         to: '/videos',
         onSelect: () => {
           open.value = false

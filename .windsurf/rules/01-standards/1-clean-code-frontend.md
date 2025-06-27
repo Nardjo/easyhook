@@ -1,5 +1,5 @@
 ---
-trigger: model_decision
+trigger: always_on
 description: APPLY feature based architecture WHEN organizing code in frontend
 globs: apps/frontend/**
 ---

@@ -1,6 +1,6 @@
 ---
 trigger: model_decision
-description: Enforce PSR-4 autoloading conventions for all PHP source files to ensure interoperability, maintainability, and compatibility with modern PHP tools and frameworks. Apply when creating, naming, or organizing PHP classes and namespaces in any project using autoloading.
+description: Enforce PSR-4 autoloading conventions for all PHP source files to ensure interoperability, maintainability, and compatibility with modern PHP tools and frameworks.
 globs: **/src/**/*.php
 ---
 

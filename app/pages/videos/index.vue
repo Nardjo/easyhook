@@ -11,7 +11,7 @@
         </template>
 
         <template #right>
-          <UButton color="info" size="sm" label="Ajouter une vidéo" />
+          <UButton color="info" size="sm" label="Ajouter une vidéo" to="/videos/add" />
         </template>
       </UDashboardNavbar>
     </template>
@@ -64,7 +64,7 @@
       header: 'Action',
       cell: () => [
         h(resolveComponent('UButton'), { color: 'primary', size: 'xs', label: 'Voir' }),
-        h(resolveComponent('UButton'), { color: 'info', size: 'xs', label: 'Ajouter hook', class: 'ml-2' }),
+        h(resolveComponent('UButton'), { color: 'info', size: 'xs', label: 'Ajouter un hook', class: 'ml-2' }),
         h(resolveComponent('UButton'), { color: 'error', size: 'xs', label: 'Supprimer', class: 'ml-2' }),
       ],
     },

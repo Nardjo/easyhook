@@ -1,6 +1,7 @@
 ---
-trigger: model_decision
+trigger: glob
 description: Apply Nuxt 3 standards for modern Vue development, focusing on consistent file structure (template, script, style), leveraging auto-imported composables, and avoiding redundant imports to keep code clean and maintainable.
+globs: app/**/*.vue
 ---
 
 ## Nuxt Rules
