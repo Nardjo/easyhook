@@ -1,28 +1,3 @@
-<script setup lang="ts">
-  import * as z from 'zod'
-  import type { FormError } from '@nuxt/ui'
-
-  const passwordSchema = z.object({
-    current: z.string().min(8, 'Must be at least 8 characters'),
-    new: z.string().min(8, 'Must be at least 8 characters'),
-  })
-
-  type PasswordSchema = z.output<typeof passwordSchema>
-
-  const password = reactive<Partial<PasswordSchema>>({
-    current: undefined,
-    new: undefined,
-  })
-
-  const validate = (state: Partial<PasswordSchema>): FormError[] => {
-    const errors: FormError[] = []
-    if (state.current && state.new && state.current === state.new) {
-      errors.push({ name: 'new', message: 'Passwords must be different' })
-    }
-    return errors
-  }
-</script>
-
 <template>
   <UPageCard title="Password" description="Confirm your current password before setting a new one." variant="subtle">
     <UForm :schema="passwordSchema" :state="password" :validate="validate" class="flex flex-col gap-4 max-w-xs">
@@ -47,3 +22,28 @@
     </template>
   </UPageCard>
 </template>
+
+<script setup lang="ts">
+  import * as z from 'zod'
+  import type { FormError } from '@nuxt/ui'
+
+  const passwordSchema = z.object({
+    current: z.string().min(8, 'Must be at least 8 characters'),
+    new: z.string().min(8, 'Must be at least 8 characters'),
+  })
+
+  type PasswordSchema = z.output<typeof passwordSchema>
+
+  const password = reactive<Partial<PasswordSchema>>({
+    current: undefined,
+    new: undefined,
+  })
+
+  const validate = (state: Partial<PasswordSchema>): FormError[] => {
+    const errors: FormError[] = []
+    if (state.current && state.new && state.current === state.new) {
+      errors.push({ name: 'new', message: 'Passwords must be different' })
+    }
+    return errors
+  }
+</script>

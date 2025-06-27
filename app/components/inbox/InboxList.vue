@@ -1,47 +1,3 @@
-<script setup lang="ts">
-  import { format, isToday } from 'date-fns'
-  import type { Mail } from '~/types'
-
-  const props = defineProps<{
-    mails: Mail[]
-  }>()
-
-  const mailsRefs = ref<Element[]>([])
-
-  const selectedMail = defineModel<Mail | null>()
-
-  watch(selectedMail, () => {
-    if (!selectedMail.value) {
-      return
-    }
-    const ref = mailsRefs.value[selectedMail.value.id]
-    if (ref) {
-      ref.scrollIntoView({ block: 'nearest' })
-    }
-  })
-
-  defineShortcuts({
-    arrowdown: () => {
-      const index = props.mails.findIndex(mail => mail.id === selectedMail.value?.id)
-
-      if (index === -1) {
-        selectedMail.value = props.mails[0]
-      } else if (index < props.mails.length - 1) {
-        selectedMail.value = props.mails[index + 1]
-      }
-    },
-    arrowup: () => {
-      const index = props.mails.findIndex(mail => mail.id === selectedMail.value?.id)
-
-      if (index === -1) {
-        selectedMail.value = props.mails[props.mails.length - 1]
-      } else if (index > 0) {
-        selectedMail.value = props.mails[index - 1]
-      }
-    },
-  })
-</script>
-
 <template>
   <div class="overflow-y-auto divide-y divide-default">
     <div
@@ -86,3 +42,47 @@
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+  import { format, isToday } from 'date-fns'
+  import type { Mail } from '~/types'
+
+  const props = defineProps<{
+    mails: Mail[]
+  }>()
+
+  const mailsRefs = ref<Element[]>([])
+
+  const selectedMail = defineModel<Mail | null>()
+
+  watch(selectedMail, () => {
+    if (!selectedMail.value) {
+      return
+    }
+    const ref = mailsRefs.value[selectedMail.value.id]
+    if (ref) {
+      ref.scrollIntoView({ block: 'nearest' })
+    }
+  })
+
+  defineShortcuts({
+    arrowdown: () => {
+      const index = props.mails.findIndex(mail => mail.id === selectedMail.value?.id)
+
+      if (index === -1) {
+        selectedMail.value = props.mails[0]
+      } else if (index < props.mails.length - 1) {
+        selectedMail.value = props.mails[index + 1]
+      }
+    },
+    arrowup: () => {
+      const index = props.mails.findIndex(mail => mail.id === selectedMail.value?.id)
+
+      if (index === -1) {
+        selectedMail.value = props.mails[props.mails.length - 1]
+      } else if (index > 0) {
+        selectedMail.value = props.mails[index - 1]
+      }
+    },
+  })
+</script>

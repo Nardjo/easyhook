@@ -1,3 +1,27 @@
+<template>
+  <UCard ref="cardRef" :ui="{ body: '!px-0 !pt-0 !pb-3' }">
+    <template #header>
+      <div>
+        <p class="text-xs text-muted uppercase mb-1.5">Revenue</p>
+        <p class="text-3xl text-highlighted font-semibold">
+          {{ formatNumber(total) }}
+        </p>
+      </div>
+    </template>
+
+    <VisXYContainer :data="data" :padding="{ top: 40 }" class="h-96" :width="width">
+      <VisLine :x="x" :y="y" color="var(--ui-primary)" />
+      <VisArea :x="x" :y="y" color="var(--ui-primary)" :opacity="0.1" />
+
+      <VisAxis type="x" :x="x" :tick-format="xTicks" />
+
+      <VisCrosshair color="var(--ui-primary)" :template="template" />
+
+      <VisTooltip />
+    </VisXYContainer>
+  </UCard>
+</template>
+
 <script setup lang="ts">
   import { eachDayOfInterval, eachWeekOfInterval, eachMonthOfInterval, format } from 'date-fns'
   import { VisXYContainer, VisLine, VisAxis, VisArea, VisCrosshair, VisTooltip } from '@unovis/vue'
@@ -64,30 +88,6 @@
 
   const template = (d: DataRecord) => `${formatDate(d.date)}: ${formatNumber(d.amount)}`
 </script>
-
-<template>
-  <UCard ref="cardRef" :ui="{ body: '!px-0 !pt-0 !pb-3' }">
-    <template #header>
-      <div>
-        <p class="text-xs text-muted uppercase mb-1.5">Revenue</p>
-        <p class="text-3xl text-highlighted font-semibold">
-          {{ formatNumber(total) }}
-        </p>
-      </div>
-    </template>
-
-    <VisXYContainer :data="data" :padding="{ top: 40 }" class="h-96" :width="width">
-      <VisLine :x="x" :y="y" color="var(--ui-primary)" />
-      <VisArea :x="x" :y="y" color="var(--ui-primary)" :opacity="0.1" />
-
-      <VisAxis type="x" :x="x" :tick-format="xTicks" />
-
-      <VisCrosshair color="var(--ui-primary)" :template="template" />
-
-      <VisTooltip />
-    </VisXYContainer>
-  </UCard>
-</template>
 
 <style scoped>
   .unovis-xy-container {

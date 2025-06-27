@@ -1,3 +1,16 @@
+<template>
+  <USelect
+    v-model="model"
+    :items="periods"
+    variant="ghost"
+    class="data-[state=open]:bg-elevated"
+    :ui="{
+      value: 'capitalize',
+      itemLabel: 'capitalize',
+      trailingIcon: 'group-data-[state=open]:rotate-180 transition-transform duration-200',
+    }" />
+</template>
+
 <script setup lang="ts">
   import { eachDayOfInterval } from 'date-fns'
   import type { Period, Range } from '~/types'
@@ -29,16 +42,3 @@
     }
   })
 </script>
-
-<template>
-  <USelect
-    v-model="model"
-    :items="periods"
-    variant="ghost"
-    class="data-[state=open]:bg-elevated"
-    :ui="{
-      value: 'capitalize',
-      itemLabel: 'capitalize',
-      trailingIcon: 'group-data-[state=open]:rotate-180 transition-transform duration-200',
-    }" />
-</template>

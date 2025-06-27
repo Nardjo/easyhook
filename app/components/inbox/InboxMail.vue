@@ -1,59 +1,3 @@
-<script setup lang="ts">
-  import { format } from 'date-fns'
-  import type { Mail } from '~/types'
-
-  defineProps<{
-    mail: Mail
-  }>()
-
-  const emits = defineEmits(['close'])
-
-  const dropdownItems = [
-    [
-      {
-        label: 'Mark as unread',
-        icon: 'i-lucide-check-circle',
-      },
-      {
-        label: 'Mark as important',
-        icon: 'i-lucide-triangle-alert',
-      },
-    ],
-    [
-      {
-        label: 'Star thread',
-        icon: 'i-lucide-star',
-      },
-      {
-        label: 'Mute thread',
-        icon: 'i-lucide-circle-pause',
-      },
-    ],
-  ]
-
-  const toast = useToast()
-
-  const reply = ref('')
-  const loading = ref(false)
-
-  function onSubmit() {
-    loading.value = true
-
-    setTimeout(() => {
-      reply.value = ''
-
-      toast.add({
-        title: 'Email sent',
-        description: 'Your email has been sent successfully',
-        icon: 'i-lucide-check-circle',
-        color: 'success',
-      })
-
-      loading.value = false
-    }, 1000)
-  }
-</script>
-
 <template>
   <UDashboardPanel id="inbox-2">
     <UDashboardNavbar :title="mail.subject" :toggle="false">
@@ -137,3 +81,59 @@
     </div>
   </UDashboardPanel>
 </template>
+
+<script setup lang="ts">
+  import { format } from 'date-fns'
+  import type { Mail } from '~/types'
+
+  defineProps<{
+    mail: Mail
+  }>()
+
+  const emits = defineEmits(['close'])
+
+  const dropdownItems = [
+    [
+      {
+        label: 'Mark as unread',
+        icon: 'i-lucide-check-circle',
+      },
+      {
+        label: 'Mark as important',
+        icon: 'i-lucide-triangle-alert',
+      },
+    ],
+    [
+      {
+        label: 'Star thread',
+        icon: 'i-lucide-star',
+      },
+      {
+        label: 'Mute thread',
+        icon: 'i-lucide-circle-pause',
+      },
+    ],
+  ]
+
+  const toast = useToast()
+
+  const reply = ref('')
+  const loading = ref(false)
+
+  function onSubmit() {
+    loading.value = true
+
+    setTimeout(() => {
+      reply.value = ''
+
+      toast.add({
+        title: 'Email sent',
+        description: 'Your email has been sent successfully',
+        icon: 'i-lucide-check-circle',
+        color: 'success',
+      })
+
+      loading.value = false
+    }, 1000)
+  }
+</script>

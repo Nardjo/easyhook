@@ -3,8 +3,8 @@
 import { createConfigForNuxt } from '@nuxt/eslint-config/flat'
 import prettierConfig from 'eslint-config-prettier'
 
-export default [
-  createConfigForNuxt(),
+export default createConfigForNuxt().then(config => [
+  ...config,
   {
     rules: {
       '@typescript-eslint/no-explicit-any': 'off',
@@ -17,4 +17,4 @@ export default [
     },
   },
   prettierConfig,
-]
+])
