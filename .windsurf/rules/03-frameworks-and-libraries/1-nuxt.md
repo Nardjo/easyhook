@@ -18,27 +18,14 @@ description: Apply Nuxt 3 standards for modern Vue development, focusing on cons
 </template>
 
 <script setup lang="ts">
-// Logic
+  // Logic
 </script>
 
 <style scoped>
-/* Styles */
+  /* Styles */
 </style>
 
-Imports
-- Do not import items that Nuxt auto-imports.
-
-Examples of auto-imported functions:
-- ref
-- computed
-- definePageMeta
-- useRouter
-- useAsyncData
-
-✅ Use them directly:
-const count = ref(0)
-const router = useRouter()
-
-❌ Avoid manual imports:
-import { ref } from 'vue'
-import { useRouter } from '#app'
+Imports - Do not import items that Nuxt auto-imports. Examples of auto-imported functions: - ref - computed -
+definePageMeta - useRouter - useAsyncData ✅ Use them directly: const count = ref(0) const router = useRouter() ❌ Avoid
+manual imports: import { ref } from 'vue' import { useRouter } from '#app'
+```

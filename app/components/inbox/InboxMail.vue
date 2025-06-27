@@ -1,70 +1,69 @@
 <script setup lang="ts">
-import { format } from 'date-fns'
-import type { Mail } from '~/types'
+  import { format } from 'date-fns'
+  import type { Mail } from '~/types'
 
-defineProps<{
-  mail: Mail
-}>()
+  defineProps<{
+    mail: Mail
+  }>()
 
-const emits = defineEmits(['close'])
+  const emits = defineEmits(['close'])
 
-const dropdownItems = [[{
-  label: 'Mark as unread',
-  icon: 'i-lucide-check-circle'
-}, {
-  label: 'Mark as important',
-  icon: 'i-lucide-triangle-alert'
-}], [{
-  label: 'Star thread',
-  icon: 'i-lucide-star'
-}, {
-  label: 'Mute thread',
-  icon: 'i-lucide-circle-pause'
-}]]
+  const dropdownItems = [
+    [
+      {
+        label: 'Mark as unread',
+        icon: 'i-lucide-check-circle',
+      },
+      {
+        label: 'Mark as important',
+        icon: 'i-lucide-triangle-alert',
+      },
+    ],
+    [
+      {
+        label: 'Star thread',
+        icon: 'i-lucide-star',
+      },
+      {
+        label: 'Mute thread',
+        icon: 'i-lucide-circle-pause',
+      },
+    ],
+  ]
 
-const toast = useToast()
+  const toast = useToast()
 
-const reply = ref('')
-const loading = ref(false)
+  const reply = ref('')
+  const loading = ref(false)
 
-function onSubmit() {
-  loading.value = true
+  function onSubmit() {
+    loading.value = true
 
-  setTimeout(() => {
-    reply.value = ''
+    setTimeout(() => {
+      reply.value = ''
 
-    toast.add({
-      title: 'Email sent',
-      description: 'Your email has been sent successfully',
-      icon: 'i-lucide-check-circle',
-      color: 'success'
-    })
+      toast.add({
+        title: 'Email sent',
+        description: 'Your email has been sent successfully',
+        icon: 'i-lucide-check-circle',
+        color: 'success',
+      })
 
-    loading.value = false
-  }, 1000)
-}
+      loading.value = false
+    }, 1000)
+  }
 </script>
 
 <template>
   <UDashboardPanel id="inbox-2">
     <UDashboardNavbar :title="mail.subject" :toggle="false">
       <template #leading>
-        <UButton
-          icon="i-lucide-x"
-          color="neutral"
-          variant="ghost"
-          class="-ms-1.5"
-          @click="emits('close')"
-        />
+        <UButton icon="i-lucide-x" color="neutral" variant="ghost" class="-ms-1.5" @click="emits('close')" />
       </template>
 
       <template #right>
         <UTooltip text="Archive">
-          <UButton
-            icon="i-lucide-inbox"
-            color="neutral"
-            variant="ghost"
-          />
+          <UButton icon="i-lucide-inbox" color="neutral" variant="ghost" />
         </UTooltip>
 
         <UTooltip text="Reply">
@@ -72,22 +71,14 @@ function onSubmit() {
         </UTooltip>
 
         <UDropdownMenu :items="dropdownItems">
-          <UButton
-            icon="i-lucide-ellipsis-vertical"
-            color="neutral"
-            variant="ghost"
-          />
+          <UButton icon="i-lucide-ellipsis-vertical" color="neutral" variant="ghost" />
         </UDropdownMenu>
       </template>
     </UDashboardNavbar>
 
     <div class="flex flex-col sm:flex-row justify-between gap-1 p-4 sm:px-6 border-b border-default">
       <div class="flex items-start gap-4 sm:my-1.5">
-        <UAvatar
-          v-bind="mail.from.avatar"
-          :alt="mail.from.name"
-          size="3xl"
-        />
+        <UAvatar v-bind="mail.from.avatar" :alt="mail.from.name" size="3xl" />
 
         <div class="min-w-0">
           <p class="font-semibold text-highlighted">
@@ -115,9 +106,7 @@ function onSubmit() {
         <template #header>
           <UIcon name="i-lucide-reply" class="size-5" />
 
-          <span class="text-sm truncate">
-            Reply to {{ mail.from.name }} ({{ mail.from.email }})
-          </span>
+          <span class="text-sm truncate">Reply to {{ mail.from.name }} ({{ mail.from.email }})</span>
         </template>
 
         <form @submit.prevent="onSubmit">
@@ -131,31 +120,16 @@ function onSubmit() {
             :rows="4"
             :disabled="loading"
             class="w-full"
-            :ui="{ base: 'p-0 resize-none' }"
-          />
+            :ui="{ base: 'p-0 resize-none' }" />
 
           <div class="flex items-center justify-between">
             <UTooltip text="Attach file">
-              <UButton
-                color="neutral"
-                variant="ghost"
-                icon="i-lucide-paperclip"
-              />
+              <UButton color="neutral" variant="ghost" icon="i-lucide-paperclip" />
             </UTooltip>
 
             <div class="flex items-center justify-end gap-2">
-              <UButton
-                color="neutral"
-                variant="ghost"
-                label="Save draft"
-              />
-              <UButton
-                type="submit"
-                color="neutral"
-                :loading="loading"
-                label="Send"
-                icon="i-lucide-send"
-              />
+              <UButton color="neutral" variant="ghost" label="Save draft" />
+              <UButton type="submit" color="neutral" :loading="loading" label="Send" icon="i-lucide-send" />
             </div>
           </div>
         </form>
