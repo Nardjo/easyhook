@@ -16,7 +16,14 @@ export function parseVideoFormData(formData: MultiPartField[]): VideoFormPayload
   if (!name) {
     throw new Error('ERR_API_VIDEO_002: Missing video name')
   }
-  return {
-    name
+  const fileField = formData.find(f => f.name === 'file')
+  if (!fileField || !fileField.data) {
+    return { name }
   }
+  return {
+    name,
+    file: fileField.data,
+    filename: fileField.filename,
+    mimetype: fileField.type
+  } as any // Cast to any for now; update VideoFormPayload if needed
 }
