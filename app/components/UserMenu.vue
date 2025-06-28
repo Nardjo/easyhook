@@ -1,48 +1,35 @@
 <template>
-  <UDropdownMenu
-    :items="items"
-    :content="{ align: 'center', collisionPadding: 12 }"
-    :ui="{ content: collapsed ? 'w-48' : 'w-(--reka-dropdown-menu-trigger-width)' }">
-    <UButton
-      v-bind="{
-        ...user,
-        label: collapsed ? undefined : user?.name,
-        trailingIcon: collapsed ? undefined : 'i-lucide-chevrons-up-down',
-      }"
-      color="neutral"
-      variant="ghost"
-      block
-      :square="collapsed"
-      class="data-[state=open]:bg-elevated"
-      :ui="{
-        trailingIcon: 'text-dimmed',
-      }" />
-
-    <template #chip-leading="{ item }">
-      <span
-        :style="{
-          '--chip-light': `var(--color-${(item as any).chip}-500)`,
-          '--chip-dark': `var(--color-${(item as any).chip}-400)`,
-        }"
-        class="ms-0.5 size-2 rounded-full bg-(--chip-light) dark:bg-(--chip-dark)" />
-    </template>
-  </UDropdownMenu>
+  <UserMenuDropdown :menu-items="menuItems" :button-props="buttonProps" :collapsed="collapsed" />
 </template>
 
 <script setup lang="ts">
-  import type { DropdownMenuItem } from '@nuxt/ui'
-
-  import { useUserStore } from '@/stores/user'
-  import { storeToRefs } from 'pinia'
+  import { computed, ref } from 'vue'
   import { useRouter } from 'vue-router'
-  import { ref } from 'vue'
+  import { useUserStore } from '@/stores/user'
+  import { useAppConfig, useColorMode } from '#imports'
+  import type { DropdownMenuItem } from '@nuxt/ui'
+  import UserMenuDropdown from './UserMenuDropdown.vue'
 
-  defineProps<{
-    collapsed?: boolean
-  }>()
+  const props = defineProps<{ collapsed?: boolean }>()
 
   const colorMode = useColorMode()
   const appConfig = useAppConfig()
+  const router = useRouter()
+  const avatarSrc = ref<string | undefined>(undefined)
+  const userStore = useUserStore()
+
+  const userFullName = computed((): string => {
+    if (userStore.firstName || userStore.lastName) {
+      return `${userStore.firstName ?? ''} ${userStore.lastName ?? ''}`.trim()
+    }
+    return ''
+  })
+
+  const buttonProps = computed<Record<string, unknown>>(() => ({
+    label: !props.collapsed ? userFullName.value : undefined,
+    trailingIcon: !props.collapsed ? 'i-lucide-chevrons-up-down' : undefined,
+    avatar: avatarSrc.value ? { src: avatarSrc.value, alt: userFullName.value } : undefined,
+  }))
 
   const colors = [
     'red',
@@ -62,25 +49,13 @@
     'fuchsia',
     'pink',
     'rose',
-  ]
-  const neutrals = ['slate', 'gray', 'zinc', 'neutral', 'stone']
+  ] as const
 
-  const userStore = useUserStore()
-  const { firstName, lastName, email } = storeToRefs(userStore)
-  const router = useRouter()
-  const avatarSrc = ref<string | undefined>(undefined)
+  const neutrals = ['slate', 'gray', 'zinc', 'neutral', 'stone'] as const
 
-  // You may want to fetch or generate an avatar based on email or initials
-  // For now, fallback to initials
-  const userFullName = computed(() => {
-    if (firstName.value || lastName.value) return `${firstName.value ?? ''} ${lastName.value ?? ''}`.trim()
-    return email.value ?? ''
-  })
-
-  const items = computed<DropdownMenuItem[][]>(() => [
+  const menuItems = computed<DropdownMenuItem[][]>(() => [
     [
       {
-        type: 'label',
         label: userFullName.value,
         avatar: avatarSrc.value ? { src: avatarSrc.value, alt: userFullName.value } : undefined,
       },
@@ -240,8 +215,8 @@
         label: 'Log out',
         icon: 'i-lucide-log-out',
         async onSelect() {
-          await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' })
-          userStore.clearUser()
+          await fetch('/api/logout', { method: 'POST', credentials: 'include' })
+          userStoreRefs.clearUser()
           router.push('/login')
         },
       },
