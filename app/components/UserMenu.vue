@@ -32,6 +32,11 @@
 <script setup lang="ts">
   import type { DropdownMenuItem } from '@nuxt/ui'
 
+  import { useUserStore } from '@/stores/user'
+  import { storeToRefs } from 'pinia'
+  import { useRouter } from 'vue-router'
+  import { ref } from 'vue'
+
   defineProps<{
     collapsed?: boolean
   }>()
@@ -60,20 +65,24 @@
   ]
   const neutrals = ['slate', 'gray', 'zinc', 'neutral', 'stone']
 
-  const user = ref({
-    name: 'Benjamin Canac',
-    avatar: {
-      src: 'https://github.com/benjamincanac.png',
-      alt: 'Benjamin Canac',
-    },
+  const userStore = useUserStore()
+  const { firstName, lastName, email } = storeToRefs(userStore)
+  const router = useRouter()
+  const avatarSrc = ref<string | undefined>(undefined)
+
+  // You may want to fetch or generate an avatar based on email or initials
+  // For now, fallback to initials
+  const userFullName = computed(() => {
+    if (firstName.value || lastName.value) return `${firstName.value ?? ''} ${lastName.value ?? ''}`.trim()
+    return email.value ?? ''
   })
 
   const items = computed<DropdownMenuItem[][]>(() => [
     [
       {
         type: 'label',
-        label: user.value.name,
-        avatar: user.value.avatar,
+        label: userFullName.value,
+        avatar: avatarSrc.value ? { src: avatarSrc.value, alt: userFullName.value } : undefined,
       },
     ],
     [
@@ -230,6 +239,11 @@
       {
         label: 'Log out',
         icon: 'i-lucide-log-out',
+        async onSelect() {
+          await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' })
+          userStore.clearUser()
+          router.push('/login')
+        },
       },
     ],
   ])

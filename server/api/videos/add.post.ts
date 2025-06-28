@@ -2,9 +2,17 @@ import { readMultipartFormData, sendError, defineEventHandler, createError } fro
 import { serverSupabaseClient } from '#supabase/server'
 import { parseVideoFormData } from '../../utils/parseVideoFormData'
 import type { VideoFormPayload } from '../../../types/video'
+import { z } from 'zod'
 
 import { promises as fs } from 'fs'
 import path from 'path'
+
+const payloadSchema = z.object({
+  name: z.string().min(1, 'ERR_API_VIDEO_002: Missing video name'),
+  file: z.union([z.instanceof(Buffer), z.string().min(1)]).refine(val => val, 'ERR_API_VIDEO_002: Missing file in payload'),
+  filename: z.string().min(1, 'ERR_API_VIDEO_002: Missing filename'),
+  mimetype: z.string().optional()
+})
 
 export default defineEventHandler(async event => {
   try {
@@ -18,21 +26,29 @@ export default defineEventHandler(async event => {
     } catch (err: any) {
       throw createError({ statusCode: 400, statusMessage: err.message })
     }
-    if (!payload.file) {
-      throw createError({ statusCode: 400, statusMessage: 'ERR_API_VIDEO_002: Missing file in payload' })
+    const parsePayload = payloadSchema.safeParse(payload)
+    if (!parsePayload.success) {
+      throw createError({ statusCode: 400, statusMessage: parsePayload.error.errors[0].message })
     }
     // Stockage local du fichier
     const uploadDir = path.resolve(process.cwd(), 'public/videos')
     await fs.mkdir(uploadDir, { recursive: true })
-    const fileName = payload.filename || `${Date.now()}_video` // fallback if no filename
+    const fileName = parsePayload.data.filename
     const filePath = path.join(uploadDir, fileName)
-    const fileBuffer = typeof payload.file === 'string' ? Buffer.from(payload.file) : payload.file
+    const fileBuffer = typeof parsePayload.data.file === 'string' ? Buffer.from(parsePayload.data.file) : parsePayload.data.file
     await fs.writeFile(filePath, fileBuffer)
     // Enregistrement en base
     const client = await serverSupabaseClient(event)
+    const {
+      data: { user },
+      error: userError
+    } = await client.auth.getUser()
+    if (userError || !user) {
+      throw createError({ statusCode: 401, statusMessage: 'ERR_API_VIDEO_013: User not authenticated' })
+    }
     const { error: dbError } = await client
       .from('videos')
-      .insert([{ name: payload.name, file: `/videos/${fileName}`, size: fileBuffer?.byteLength || 0 }])
+      .insert([{ name: parsePayload.data.name, file: `/videos/${fileName}`, size: fileBuffer?.byteLength || 0, user_id: user.id }])
     if (dbError) {
       throw createError({
         statusCode: 500,

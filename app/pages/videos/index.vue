@@ -32,8 +32,8 @@
 </template>
 
 <script setup lang="ts">
-  import { h, resolveComponent } from 'vue'
   import type { TableColumn } from '@nuxt/ui'
+  import { z } from 'zod'
 
   interface VideoRow {
     id: string
@@ -42,7 +42,7 @@
     videoSize: string
   }
 
-  const columns: TableColumn<VideoRow & { action: string }>[] = [
+  const columns: TableColumn<VideoRow>[] = [
     {
       accessorKey: 'id',
       header: 'ID',
@@ -62,32 +62,47 @@
     {
       accessorKey: 'action',
       header: 'Action',
-      cell: () => [
-        h(resolveComponent('UButton'), { color: 'primary', size: 'xs', label: 'Voir' }),
+      cell: cell => [
+        h(resolveComponent('UButton'), {
+          color: 'primary',
+          size: 'xs',
+          label: 'Modifier',
+          onClick: () => navigateTo({ name: 'videos-id', params: { id: cell.row.id } }),
+        }),
         h(resolveComponent('UButton'), { color: 'info', size: 'xs', label: 'Ajouter un hook', class: 'ml-2' }),
         h(resolveComponent('UButton'), { color: 'error', size: 'xs', label: 'Supprimer', class: 'ml-2' }),
       ],
     },
   ]
 
-  const data: (VideoRow & { action: string })[] = [
-    {
-      id: '1',
-      name: 'Video 1',
-      uploadDate: '2025-06-27',
-      videoSize: '120 MB',
-    },
-    {
-      id: '2',
-      name: 'Video 2',
-      uploadDate: '2025-06-27',
-      videoSize: '120 MB',
-    },
-    {
-      id: '3',
-      name: 'Video 3',
-      uploadDate: '2025-06-27',
-      videoSize: '120 MB',
-    },
-  ]
+  const videoRowSchema = z.object({
+    id: z.string(),
+    name: z.string(),
+    created_at: z.string(),
+    file: z.string(),
+    size: z.number().optional(),
+  })
+  const apiResponseSchema = z.object({
+    videos: z.array(videoRowSchema),
+  })
+
+  const { data: apiData, error } = await useAsyncData('videos', async () => {
+    const response = await $fetch('/api/videos')
+    const parsed = apiResponseSchema.safeParse(response)
+    if (!parsed.success) {
+      throw new Error('ERR_FRONT_VIDEO_001: Invalid API response')
+    }
+    return parsed.data.videos.map(video => ({
+      id: video.id,
+      name: video.name,
+      uploadDate: video.created_at.split('T')[0],
+      videoSize: video.size ? `${(video.size / 1024 / 1024).toFixed(2)} MB` : '—',
+    }))
+  })
+
+  // if (error.value) {
+  //   throw new Error('ERR_FRONT_VIDEO_002: Failed to fetch videos')
+  // }
+
+  const data = apiData.value ?? []
 </script>
